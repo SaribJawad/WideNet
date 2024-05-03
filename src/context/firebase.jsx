@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { createContext, useContext } from "react";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import { getDatabase, ref, set } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -13,20 +14,17 @@ const firebaseConfig = {
   measurementId: "G-48CCX7RN0B",
 };
 
-interface FirebaseContextType {
-  signup: (email: string, password: string) => Promise<any>;
-}
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const database = getDatabase(app);
 const auth = getAuth();
 
-const FirebaseContext = (createContext < FirebaseContextType) | (null > null);
+const FirebaseContext = createContext();
 
-export function FirebaseContextProvider(children) {
+export function FirebaseContextProvider({ children }) {
   // Sign Up
-  async function signup(email: string, password: string) {
+  async function signup(email, password) {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
       email,
@@ -35,11 +33,23 @@ export function FirebaseContextProvider(children) {
     return userCredential;
   }
 
+  function putData(key, data) {
+    set(ref(database, key), data);
+  }
+
   return (
-    <FirebaseContext.Provider value={{ signup }}>
+    <FirebaseContext.Provider value={{ signup, putData }}>
       {children}
     </FirebaseContext.Provider>
   );
 }
 
-export const useFirebase = () => useContext(FirebaseContext);
+export const useFirebase = () => {
+  const context = useContext(FirebaseContext);
+  if (!context) {
+    throw new Error(
+      "useFirebase must be used within a FirebaseContextProvider component"
+    );
+  }
+  return context;
+};
