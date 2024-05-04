@@ -1,8 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { createContext, useContext } from "react";
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
+import { GiConsoleController } from "react-icons/gi";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -18,12 +25,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
+const provider = new GoogleAuthProvider();
 const auth = getAuth();
 
 const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
-  // Sign Up
+  // Sign up
   async function signup(email, password) {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -32,13 +40,30 @@ export function FirebaseContextProvider({ children }) {
     );
     return userCredential;
   }
+  // Sign in
+  async function signinUser(email, password) {
+    return await signInWithEmailAndPassword(auth, email, password);
+  }
+
+  // Sign in with google
+  function signupWithGoogle() {
+    signInWithPopup(auth, provider);
+    // .then((result) => {
+    //   console.log(result);
+    // })
+    // .catch((error) => {
+    //   console.error("Error signing in with Google:", error);
+    // });
+  }
 
   function putData(key, data) {
     set(ref(database, key), data);
   }
 
   return (
-    <FirebaseContext.Provider value={{ signup, putData }}>
+    <FirebaseContext.Provider
+      value={{ signup, putData, signinUser, signupWithGoogle }}
+    >
       {children}
     </FirebaseContext.Provider>
   );

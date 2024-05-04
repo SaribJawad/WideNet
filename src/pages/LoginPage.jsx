@@ -1,52 +1,126 @@
 import { FcGoogle } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { BiErrorCircle } from "react-icons/bi";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useFirebase } from "../context/firebase";
+import { useState } from "react";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const { signinUser, signupWithGoogle } = useFirebase();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  // signup btn
+  function signupBtn() {
+    navigate("/signup");
+    console.log("clicked");
+  }
+
+  const schema = yup.object().shape({
+    email: yup.string().email().required("Email is required"),
+    password: yup.string().required("Password is required"),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(schema) });
+
+  // login btn
+  async function login(data) {
+    try {
+      setIsLoading(true);
+      const signedInUser = await signinUser(data.email, data.password);
+      if (!signedInUser) {
+        setIsError(true);
+        console.log("error logging in");
+      }
+      navigate("/");
+    } finally {
+      setIsLoading(false);
+      setIsError(false);
+    }
+  }
+
   return (
-    <form className=" flex items-center flex-col gap-5 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-      <div className="flex items-center flex-col mb-7">
-        <h1 className="text-[4rem] font-medium">Log in.</h1>
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="username">Username</label>
-        <input
-          type="text"
-          id="username"
-          placeholder="username"
-          className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label htmlFor="password">Password</label>
-        <input
-          type="text"
-          id="password"
-          placeholder="password"
-          className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
-        />
-      </div>
-      <div className="buttons mt-5 flex flex-col gap-5 w-full">
-        <div className="w-full flex gap-5">
-          <button
-            type="submit"
-            className="
-          w-[30%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md"
-          >
-            Login
-          </button>
-          <button
-            type="submit"
-            className="w-[70%] px-6 py-[8px] text- bg-[#ffffff] text-black font-medium rounded-md flex items-center gap-2 justify-center"
-          >
-            Sign in with
-            <span>
-              <FcGoogle size={20} />
-            </span>
-          </button>
+    <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
+      <form
+        onSubmit={handleSubmit(login)}
+        className=" flex items-center flex-col gap-5 "
+      >
+        <div className="flex items-center flex-col mb-7">
+          <h1 className="text-[4rem] font-medium">Log in.</h1>
         </div>
-        <button className=" w-[100%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md">
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email">Email</label>
+          <input
+            type="text"
+            id="email"
+            placeholder="Enter your email here"
+            className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
+            {...register("email")}
+          />
+          {errors.email && (
+            <p className="text-sm text-red-600 flex items-center gap-1">
+              <span>
+                <BiErrorCircle />
+              </span>
+              {errors.email.message}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Enter your password here"
+            className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
+            {...register("password")}
+          />
+          {errors.password && (
+            <p className="text-sm text-red-600 flex items-center gap-1">
+              <span>
+                <BiErrorCircle />
+              </span>
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+        <div className="mt-5  w-full">
+          <div className="w-full flex gap-5">
+            <button
+              type="submit"
+              className="
+          w-[100%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </form>
+      <div className="w-full flex mt-3 gap-3">
+        <button
+          type="submit"
+          className="w-[50%] px-6 py-[8px] text- bg-[#ffffff] text-black font-medium rounded-md flex items-center gap-2 justify-center"
+          onClick={signupWithGoogle}
+        >
+          Sign in with
+          <span>
+            <FcGoogle size={20} />
+          </span>
+        </button>
+        <button
+          onClick={signupBtn}
+          className=" w-[50%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md"
+        >
           Sign up now
         </button>
       </div>
-    </form>
+    </div>
   );
 }

@@ -7,7 +7,6 @@ export default function HomePage() {
     <div className="h-[100vh] border-2 px-9 flex gap-[3rem]">
       <SideBar />
       <Posts />
-      <UserDisplay />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import SignupPage from "./pages/SignupPage";
 
 function App() {
   return (
-    <div className="font-poppins text-[#FAFAFA] bg-[#1A1A1A] min-h-[100vh] ">
+    <div className="font-poppins text-[#FAFAFA] bg-[#1A1A1A] min-h-[100vh] min-w-screen">
       <Navbar />
       <Routes>
         <Route index element={<HomePage />} />
