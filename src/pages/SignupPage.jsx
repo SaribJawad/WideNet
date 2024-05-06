@@ -8,6 +8,7 @@ import SpinnerMini from "../components/ui/SpinnerMini";
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const { signup, putData } = useFirebase();
 
   const schema = yup.object().shape({
@@ -15,7 +16,7 @@ export default function SignupPage() {
     email: yup.string().email().required("Email is required"),
     password: yup
       .string()
-      .min(5)
+      .min(6)
       .required("Password should be greater than 5 letters"),
     confirmPassword: yup
       .string()
@@ -41,7 +42,8 @@ export default function SignupPage() {
         email: data.email,
       });
     } catch (error) {
-      console.log("Error signing up ");
+      console.log(error.message);
+      if (error.code === "auth/email-already-in-use") setIsError(true);
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +61,14 @@ export default function SignupPage() {
       </div>
       {/* Username field */}
       <div className="flex flex-col gap-2">
+        {isError && (
+          <p className="flex justify-center items-center gap-1 text-red-600">
+            <span>
+              <BiErrorCircle />
+            </span>
+            Email is already in use
+          </p>
+        )}
         <label htmlFor="username">Username</label>
         <input
           type="text"

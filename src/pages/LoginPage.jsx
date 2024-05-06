@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFirebase } from "../context/firebase";
 import { useState } from "react";
+import SpinnerMini from "../components/ui/SpinnerMini";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -34,18 +35,20 @@ export default function LoginPage() {
   async function login(data) {
     try {
       setIsLoading(true);
-      const signedInUser = await signinUser(data.email, data.password);
-      if (!signedInUser) {
+      const signedinUser = await signinUser(data.email, data.password);
+      if (signedinUser) navigate("/");
+    } catch (err) {
+      if (
+        err.code === "auth/invalid-credential" ||
+        err.code === "auth/invalid-email" ||
+        err.code === "auth/user-not-found"
+      ) {
         setIsError(true);
-        console.log("error logging in");
       }
-      navigate("/");
     } finally {
       setIsLoading(false);
-      setIsError(false);
     }
   }
-
   return (
     <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
       <form
@@ -56,6 +59,14 @@ export default function LoginPage() {
           <h1 className="text-[4rem] font-medium">Log in.</h1>
         </div>
         <div className="flex flex-col gap-1">
+          {isError && (
+            <p className=" text-red-600 flex items-center gap-1 justify-center">
+              <span>
+                <BiErrorCircle />
+              </span>
+              Invalid email or password
+            </p>
+          )}
           <label htmlFor="email">Email</label>
           <input
             type="text"
@@ -96,9 +107,9 @@ export default function LoginPage() {
             <button
               type="submit"
               className="
-          w-[100%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md"
+          w-[100%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md flex justify-center"
             >
-              Login
+              {isLoading ? <SpinnerMini /> : "Login"}
             </button>
           </div>
         </div>

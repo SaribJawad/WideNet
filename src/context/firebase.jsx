@@ -1,15 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   getAuth,
   signInWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  onAuthStateChanged,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
-import { GiConsoleController } from "react-icons/gi";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -31,6 +31,8 @@ const auth = getAuth();
 const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
+  const [currentUser, setCurrentUser] = useState(null);
+
   // Sign up
   async function signup(email, password) {
     const userCredential = await createUserWithEmailAndPassword(
@@ -56,13 +58,24 @@ export function FirebaseContextProvider({ children }) {
     // });
   }
 
+  // auth state
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      setCurrentUser(user);
+    } else {
+      setCurrentUser(null);
+    }
+  });
+
+  // putting username of the user in realtime database
   function putData(key, data) {
     set(ref(database, key), data);
   }
 
   return (
     <FirebaseContext.Provider
-      value={{ signup, putData, signinUser, signupWithGoogle }}
+      value={{ signup, putData, signinUser, signupWithGoogle, currentUser }}
     >
       {children}
     </FirebaseContext.Provider>
