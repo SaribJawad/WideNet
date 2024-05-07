@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -8,6 +8,7 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -63,6 +64,7 @@ export function FirebaseContextProvider({ children }) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setCurrentUser(user);
+      console.log(user);
     } else {
       setCurrentUser(null);
     }
@@ -73,9 +75,21 @@ export function FirebaseContextProvider({ children }) {
     set(ref(database, key), data);
   }
 
+  //sign out fnc
+  function signOutCurrentUser() {
+    signOut(auth);
+  }
+
   return (
     <FirebaseContext.Provider
-      value={{ signup, putData, signinUser, signupWithGoogle, currentUser }}
+      value={{
+        signup,
+        putData,
+        signinUser,
+        signupWithGoogle,
+        currentUser,
+        signOutCurrentUser,
+      }}
     >
       {children}
     </FirebaseContext.Provider>

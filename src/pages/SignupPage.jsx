@@ -3,13 +3,21 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { BiErrorCircle } from "react-icons/bi";
 import { useFirebase } from "../context/firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SpinnerMini from "../components/ui/SpinnerMini";
+import { useNavigate } from "react-router-dom";
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const { signup, putData } = useFirebase();
+  const { signup, putData, currentUser } = useFirebase();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/");
+    }
+  }, [currentUser]);
 
   const schema = yup.object().shape({
     username: yup.string().required("Username is required"),

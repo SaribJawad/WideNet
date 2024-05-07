@@ -5,14 +5,21 @@ import { BiErrorCircle } from "react-icons/bi";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useFirebase } from "../context/firebase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SpinnerMini from "../components/ui/SpinnerMini";
 
 export default function LoginPage() {
+  const { signinUser, signupWithGoogle, currentUser } = useFirebase();
   const navigate = useNavigate();
-  const { signinUser, signupWithGoogle } = useFirebase();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/");
+    }
+  }, [currentUser, navigate]);
 
   // signup btn
   function signupBtn() {

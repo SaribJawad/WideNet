@@ -5,9 +5,10 @@ import { useEffect } from "react";
 export default function ProtectedRoute({ Component }) {
   const { currentUser } = useFirebase();
   const navigate = useNavigate();
+
   useEffect(() => {
     if (!currentUser) navigate("/login");
-  }, [currentUser, navigate]);
+  }, [currentUser]);
 
   return (
     <div>
