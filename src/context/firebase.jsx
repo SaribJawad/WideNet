@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   getAuth,
@@ -10,7 +10,7 @@ import {
   onAuthStateChanged,
   signOut,
 } from "firebase/auth";
-import { getDatabase, ref, set } from "firebase/database";
+import { child, get, getDatabase, ref, set } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -33,6 +33,7 @@ const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+  const [username, setUsername] = useState(null);
 
   // Sign up
   async function signup(email, password) {
@@ -64,7 +65,6 @@ export function FirebaseContextProvider({ children }) {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setCurrentUser(user);
-      console.log(user);
     } else {
       setCurrentUser(null);
     }
@@ -80,6 +80,15 @@ export function FirebaseContextProvider({ children }) {
     signOut(auth);
   }
 
+  // reading data from the database
+  useEffect(() => {
+    if (currentUser) {
+      get(child(ref(database), `users/${currentUser.uid}`)).then((snapshot) => {
+        setUsername(snapshot.val());
+      });
+    }
+  }, [currentUser]);
+
   return (
     <FirebaseContext.Provider
       value={{
@@ -89,6 +98,7 @@ export function FirebaseContextProvider({ children }) {
         signupWithGoogle,
         currentUser,
         signOutCurrentUser,
+        username,
       }}
     >
       {children}
