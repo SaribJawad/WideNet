@@ -11,6 +11,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
+import { useNavigate } from "react-router-dom";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -44,6 +45,7 @@ export function FirebaseContextProvider({ children }) {
     );
     return userCredential;
   }
+
   // Sign in
   async function signinUser(email, password) {
     return await signInWithEmailAndPassword(auth, email, password);
@@ -52,6 +54,7 @@ export function FirebaseContextProvider({ children }) {
   // Sign in with google
   function signupWithGoogle() {
     signInWithPopup(auth, provider);
+
     // .then((result) => {
     //   console.log(result);
     // })
@@ -88,6 +91,8 @@ export function FirebaseContextProvider({ children }) {
       });
     }
   }, [currentUser]);
+
+  // getting storage for the POST-image
 
   return (
     <FirebaseContext.Provider

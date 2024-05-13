@@ -13,7 +13,7 @@ export default function Post() {
         </div>
       </div>
       <div className="post pt-2">
-        <p>what a nice day</p>
+        <p>What a nice day</p>
         <img
           className="pt-2 rounded-xl object-cover w-full"
           src="https://cdn.pixabay.com/photo/2024/01/04/16/48/landscape-8487906_960_720.jpg"

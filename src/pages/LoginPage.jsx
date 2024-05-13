@@ -12,21 +12,21 @@ export default function LoginPage() {
   const { signinUser, signupWithGoogle, currentUser } = useFirebase();
   const navigate = useNavigate();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-
   useEffect(() => {
     if (currentUser) {
       navigate("/");
     }
   }, [currentUser, navigate]);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
   // signup btn
   function signupBtn() {
     navigate("/signup");
-    console.log("clicked");
   }
 
+  // schema for login form
   const schema = yup.object().shape({
     email: yup.string().email().required("Email is required"),
     password: yup.string().required("Password is required"),
@@ -56,6 +56,7 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   }
+
   return (
     <div className="absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
       <form
