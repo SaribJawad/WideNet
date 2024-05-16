@@ -11,7 +11,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
-import { useNavigate } from "react-router-dom";
+import { addDoc, collection, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -27,6 +27,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
+const firestoreDatabase = getFirestore(app);
 const provider = new GoogleAuthProvider();
 const auth = getAuth();
 
@@ -34,6 +35,7 @@ const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
+
   const [username, setUsername] = useState(null);
 
   // Sign up
@@ -64,7 +66,6 @@ export function FirebaseContextProvider({ children }) {
   }
 
   // auth state
-
   onAuthStateChanged(auth, (user) => {
     if (user) {
       setCurrentUser(user);
@@ -83,7 +84,7 @@ export function FirebaseContextProvider({ children }) {
     signOut(auth);
   }
 
-  // reading data from the database
+  // reading username from the database
   useEffect(() => {
     if (currentUser) {
       get(child(ref(database), `users/${currentUser.uid}`)).then((snapshot) => {
@@ -92,12 +93,22 @@ export function FirebaseContextProvider({ children }) {
     }
   }, [currentUser]);
 
-  // getting storage for the POST-image
+  // ref for getting the post from firestore
+  const postsRef = collection(firestoreDatabase, "posts");
+
+  async function onCreatePost(data) {
+    await addDoc(postsRef, {
+      description: data.description,
+      username: currentUser?.displayName,
+      userId: currentUser?.uid,
+    });
+  }
 
   return (
     <FirebaseContext.Provider
       value={{
         signup,
+        onCreatePost,
         putData,
         signinUser,
         signupWithGoogle,

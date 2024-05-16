@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CreatePost from "./pages/CreatePost";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route index element={<ProtectedRoute Component={HomePage} />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
+        <Route path="/createpost" element={<CreatePost />} />
       </Routes>
     </div>
   );
