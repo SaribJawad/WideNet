@@ -25,7 +25,7 @@ export default function SideBar() {
         <p className="text-[13px] text-[#8b8b8b]">{currentUser?.email}</p>
       </div>
       <button
-        className="bg-[#1A1A1A] px-5 py-2 rounded-xl text-[13px]  text-[#8b8b8b]"
+        className="bg-[#1A1A1A] px-5 py-2 rounded-3xl text-[13px]  text-[#8b8b8b]"
         onClick={handleClick}
       >
         Create post

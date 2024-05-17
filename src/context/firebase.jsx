@@ -11,7 +11,7 @@ import {
   signOut,
 } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
+import { addDoc, collection, getDocs, getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -34,6 +34,7 @@ const auth = getAuth();
 const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
+  const [postsList, setPostList] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
   const [username, setUsername] = useState(null);
@@ -93,15 +94,29 @@ export function FirebaseContextProvider({ children }) {
     }
   }, [currentUser]);
 
-  // ref for getting the post from firestore
+  // ref for the post from firestore
   const postsRef = collection(firestoreDatabase, "posts");
 
+  // creating post
   async function onCreatePost(data) {
     await addDoc(postsRef, {
       description: data.description,
       username: currentUser?.displayName,
       userId: currentUser?.uid,
     });
+  }
+
+  // getting the post from the firestore
+  async function getPosts() {
+    const data = await getDocs(postsRef);
+    setPostList(data.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
+  }
+
+  // setting likes
+  const likesRef = collection(firestoreDatabase, "likes");
+
+  async function addLikes() {
+    await addDoc(likesRef);
   }
 
   return (
@@ -115,6 +130,8 @@ export function FirebaseContextProvider({ children }) {
         currentUser,
         signOutCurrentUser,
         username,
+        postsList,
+        getPosts,
       }}
     >
       {children}
