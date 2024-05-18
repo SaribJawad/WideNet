@@ -27,7 +27,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const database = getDatabase(app);
-const firestoreDatabase = getFirestore(app);
+export const firestoreDatabase = getFirestore(app);
 const provider = new GoogleAuthProvider();
 const auth = getAuth();
 
@@ -110,13 +110,6 @@ export function FirebaseContextProvider({ children }) {
   async function getPosts() {
     const data = await getDocs(postsRef);
     setPostList(data.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
-  }
-
-  // setting likes
-  const likesRef = collection(firestoreDatabase, "likes");
-
-  async function addLikes() {
-    await addDoc(likesRef);
   }
 
   return (
