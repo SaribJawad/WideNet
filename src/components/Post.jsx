@@ -99,7 +99,7 @@ export default function Post({ post }) {
           className="cursor-pointer "
           onClick={hasUserLiked ? removeLike : addLike}
         >
-          {/* */}
+          d{/* */}
           {hasUserLiked ? (
             <IoMdHeart size={30} color="#FF3040" />
           ) : (

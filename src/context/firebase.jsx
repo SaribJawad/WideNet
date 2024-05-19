@@ -11,7 +11,15 @@ import {
   signOut,
 } from "firebase/auth";
 import { child, get, getDatabase, ref, set } from "firebase/database";
-import { addDoc, collection, getDocs, getFirestore } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  getFirestore,
+  orderBy,
+  query,
+  serverTimestamp,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -103,12 +111,14 @@ export function FirebaseContextProvider({ children }) {
       description: data.description,
       username: currentUser?.displayName,
       userId: currentUser?.uid,
+      timestamp: serverTimestamp(),
     });
   }
 
   // getting the post from the firestore
   async function getPosts() {
-    const data = await getDocs(postsRef);
+    const orderedQuery = query(postsRef, orderBy("timestamp", "desc"));
+    const data = await getDocs(orderedQuery);
     setPostList(data.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
   }
 
