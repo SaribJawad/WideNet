@@ -1,12 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import { BiErrorCircle } from "react-icons/bi";
 import { useFirebase } from "../context/firebase";
 import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
-  const { onCreatePost, currentUser } = useFirebase();
+  const { onCreatePost, currentUser, setImageUpload } = useFirebase();
   const navigate = useNavigate();
 
   const schema = yup.object().shape({
@@ -16,7 +15,7 @@ export default function CreatePost() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading },
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -25,6 +24,10 @@ export default function CreatePost() {
     onCreatePost(data);
     navigate("/");
   }
+
+  // uploadBytes(imageRef, imageUpload).then(() => {
+  //   alert("uploaded");
+  // });
 
   return (
     <div className=" h-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[500px]  text-black flex flex-col items-center justify-center gap-20">
@@ -43,9 +46,24 @@ export default function CreatePost() {
             {errors.description && errors.description.message}
           </p>
           <br />
-          <button className="bg-white px-3 py-1 rounded-3xl">
-            Create Post
-          </button>
+          <div className="flex justify-between">
+            <button className="bg-white px-3 py-1 rounded-3xl">
+              Create Post
+            </button>
+
+            <input
+              type="file"
+              id="file"
+              onChange={(e) => setImageUpload(e.target.files[0])}
+              className=" // w-[0.1px] h-[0.1px] opacity-0 overflow-hidden absolute z-[-1]"
+            />
+            <label
+              htmlFor="file"
+              className="text-[1rem]  bg-[#FFFFFF] px-3 py-1 rounded-3xl cursor-pointer"
+            >
+              Upload an image
+            </label>
+          </div>
         </form>
       </div>
     </div>

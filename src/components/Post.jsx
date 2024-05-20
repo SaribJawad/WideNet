@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import { firestoreDatabase } from "../context/firebase";
 import { useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 export default function Post({ post }) {
   const { currentUser } = useFirebase();
@@ -67,7 +68,10 @@ export default function Post({ post }) {
 
   const hasUserLiked = like?.find((x) => x.userId === currentUser?.uid);
 
-  // console.log(like);
+  // formating date
+  function timeAgo(timestamp) {
+    formatDistanceToNow(new Date(timestamp * 1000));
+  }
 
   useEffect(() => {
     getLikes();
@@ -83,10 +87,10 @@ export default function Post({ post }) {
         />
         <div className="flex flex-col leading-5">
           <span>{post.username}</span>
-          <p className="text-xs text-[#8b8b8b]">2days ago</p>
+          <p className="text-xs text-[#8b8b8b]">{timeAgo(post.timestamp)}</p>
         </div>
       </div>
-      <div className="post pt-2">
+      <div className="post pt-2 px-2">
         <p>{post.description}</p>
         {/* <img
           className="pt-2 rounded-xl object-cover w-full"
@@ -94,12 +98,11 @@ export default function Post({ post }) {
           alt=""
         /> */}
       </div>
-      <div className="pt-2 px-2 w-full flex items-center justify-between  gap-2  ">
+      <div className="pt-2  w-full flex items-center justify-between  gap-2  ">
         <span
           className="cursor-pointer "
           onClick={hasUserLiked ? removeLike : addLike}
         >
-          d{/* */}
           {hasUserLiked ? (
             <IoMdHeart size={30} color="#FF3040" />
           ) : (

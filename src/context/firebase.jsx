@@ -20,6 +20,8 @@ import {
   query,
   serverTimestamp,
 } from "firebase/firestore";
+import { getDownloadURL, getStorage, uploadBytes } from "firebase/storage";
+import { v4 } from "uuid";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -42,6 +44,8 @@ const auth = getAuth();
 const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
+  const storage = getStorage(app);
+  const [imageUpload, setImageUpload] = useState(null);
   const [postsList, setPostList] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -107,6 +111,16 @@ export function FirebaseContextProvider({ children }) {
 
   // creating post
   async function onCreatePost(data) {
+    let imageUrl = "";
+    console.log(imageUpload);
+
+    // if (imageUpload) {
+    //   const storageRef = ref(storage, `images/${imageUpload.name + v4}`);
+    //   await uploadBytes(storageRef, imageUpload);
+    //   imageUrl = await getDownloadURL(storageRef);
+    // }
+    // console.log(imageUrl);
+
     await addDoc(postsRef, {
       description: data.description,
       username: currentUser?.displayName,
@@ -122,9 +136,12 @@ export function FirebaseContextProvider({ children }) {
     setPostList(data.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
   }
 
+  // storing post/images in bucket
+
   return (
     <FirebaseContext.Provider
       value={{
+        setImageUpload,
         signup,
         onCreatePost,
         putData,
@@ -134,6 +151,7 @@ export function FirebaseContextProvider({ children }) {
         signOutCurrentUser,
         username,
         postsList,
+        storage,
         getPosts,
       }}
     >
