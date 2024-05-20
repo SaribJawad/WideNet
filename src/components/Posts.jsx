@@ -8,9 +8,6 @@ export default function Posts() {
   useEffect(() => {
     getPosts();
   }, []);
-
-  console.log(postsList);
-
   return (
     <div className="rounded-3xl bg-[#282828] w-[50%] min-w-[500px] p-5 h-[100%] min-h-[88vh]">
       {postsList?.map((post) => (

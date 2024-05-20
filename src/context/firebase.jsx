@@ -1,5 +1,4 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   createUserWithEmailAndPassword,
@@ -20,8 +19,7 @@ import {
   query,
   serverTimestamp,
 } from "firebase/firestore";
-import { getDownloadURL, getStorage, uploadBytes } from "firebase/storage";
-import { v4 } from "uuid";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyC-OjECSg-IOgBGsUozLrhAtPP2z_806dk",
@@ -35,7 +33,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const database = getDatabase(app);
 export const firestoreDatabase = getFirestore(app);
 const provider = new GoogleAuthProvider();
@@ -45,7 +42,6 @@ const FirebaseContext = createContext();
 
 export function FirebaseContextProvider({ children }) {
   const storage = getStorage(app);
-  const [imageUpload, setImageUpload] = useState(null);
   const [postsList, setPostList] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -69,13 +65,6 @@ export function FirebaseContextProvider({ children }) {
   // Sign in with google
   function signupWithGoogle() {
     signInWithPopup(auth, provider);
-
-    // .then((result) => {
-    //   console.log(result);
-    // })
-    // .catch((error) => {
-    //   console.error("Error signing in with Google:", error);
-    // });
   }
 
   // auth state
@@ -104,28 +93,19 @@ export function FirebaseContextProvider({ children }) {
         setUsername(snapshot.val());
       });
     }
-  }, [currentUser]);
+  }, []);
 
   // ref for the post from firestore
   const postsRef = collection(firestoreDatabase, "posts");
 
   // creating post
-  async function onCreatePost(data) {
-    let imageUrl = "";
-    console.log(imageUpload);
-
-    // if (imageUpload) {
-    //   const storageRef = ref(storage, `images/${imageUpload.name + v4}`);
-    //   await uploadBytes(storageRef, imageUpload);
-    //   imageUrl = await getDownloadURL(storageRef);
-    // }
-    // console.log(imageUrl);
-
+  async function onCreatePost(data, url) {
     await addDoc(postsRef, {
       description: data.description,
       username: currentUser?.displayName,
       userId: currentUser?.uid,
       timestamp: serverTimestamp(),
+      url,
     });
   }
 
@@ -136,12 +116,9 @@ export function FirebaseContextProvider({ children }) {
     setPostList(data.docs.map((doc) => ({ ...doc.data(), postId: doc.id })));
   }
 
-  // storing post/images in bucket
-
   return (
     <FirebaseContext.Provider
       value={{
-        setImageUpload,
         signup,
         onCreatePost,
         putData,

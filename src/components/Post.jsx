@@ -73,6 +73,8 @@ export default function Post({ post }) {
     formatDistanceToNow(new Date(timestamp * 1000));
   }
 
+  console.log(post);
+
   useEffect(() => {
     getLikes();
   }, []);
@@ -92,11 +94,13 @@ export default function Post({ post }) {
       </div>
       <div className="post pt-2 px-2">
         <p>{post.description}</p>
-        {/* <img
-          className="pt-2 rounded-xl object-cover w-full"
-          src="https://cdn.pixabay.com/photo/2024/01/04/16/48/landscape-8487906_960_720.jpg"
-          alt=""
-        /> */}
+        {post.url && (
+          <img
+            className="pt-2 rounded-xl object-cover w-full h-full"
+            src={post?.url}
+            alt=""
+          />
+        )}
       </div>
       <div className="pt-2  w-full flex items-center justify-between  gap-2  ">
         <span
