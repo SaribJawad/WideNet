@@ -30,6 +30,12 @@ export default function SideBar() {
       >
         Create post
       </button>
+      <button
+        className="bg-[#1A1A1A] px-5 py-2 rounded-3xl text-[13px]  text-[#8b8b8b]"
+        onClick={() => navigate("/chatroom")}
+      >
+        Chat
+      </button>
     </div>
   );
 }

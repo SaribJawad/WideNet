@@ -104,7 +104,7 @@ export default function Post({ post }) {
       </div>
       <div className="pt-2  w-full flex items-center justify-between  gap-2  ">
         <span
-          className="cursor-pointer "
+          className="cursor-pointer"
           onClick={hasUserLiked ? removeLike : addLike}
         >
           {hasUserLiked ? (
