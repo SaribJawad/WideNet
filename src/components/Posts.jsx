@@ -5,7 +5,6 @@ import Post from "./Post";
 export default function Posts() {
   const { getPosts, postsList } = useFirebase();
 
-  console.log(postsList);
   useEffect(() => {
     getPosts();
   }, []);

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useFirebase } from "../context/firebase";
 import { useEffect } from "react";
 

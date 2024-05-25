@@ -41,8 +41,8 @@ export default function CreatePost() {
   }
 
   return (
-    <div className="h-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[500px] text-black flex flex-col items-center justify-center gap-20">
-      <h1 className="text-white font-normal text-[1.5rem]">
+    <div className="h-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[500px] text-black flex flex-col items-center justify-center gap-20 text-white">
+      <h1 className=" font-normal text-[1.5rem]">
         What's on your mind, {`${currentUser?.displayName}`}!
       </h1>
       <div className="bg-[#282828] rounded-3xl flex flex-col w-full p-5">
