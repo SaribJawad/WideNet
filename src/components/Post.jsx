@@ -73,8 +73,6 @@ export default function Post({ post }) {
     formatDistanceToNow(new Date(timestamp * 1000));
   }
 
-  console.log(post);
-
   useEffect(() => {
     getLikes();
   }, []);

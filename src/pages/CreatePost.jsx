@@ -3,18 +3,24 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { useFirebase } from "../context/firebase";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 } from "uuid";
 
 export default function CreatePost() {
-  const { onCreatePost, currentUser, storage } = useFirebase();
+  const { onCreatePost, currentUser, storage, getPosts } = useFirebase();
   const [imageUpload, setImageUpload] = useState(null);
   const navigate = useNavigate();
 
   const schema = yup.object().shape({
     description: yup.string().required("You must add something."),
   });
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate("/login");
+    }
+  }, [currentUser]);
 
   const {
     register,
@@ -34,6 +40,7 @@ export default function CreatePost() {
       const storageRef = ref(storage, `images/${imageUpload.name + v4()}`);
       await uploadBytes(storageRef, imageUpload);
       imageUrl = await getDownloadURL(storageRef);
+
       setImageUpload(null);
     }
     await onCreatePost(data, imageUrl);
@@ -41,7 +48,7 @@ export default function CreatePost() {
   }
 
   return (
-    <div className="h-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[500px] text-black flex flex-col items-center justify-center gap-20 text-white">
+    <div className="h-[500px] absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[500px] text-white flex flex-col items-center justify-center gap-20">
       <h1 className=" font-normal text-[1.5rem]">
         What's on your mind, {`${currentUser?.displayName}`}!
       </h1>
@@ -57,7 +64,7 @@ export default function CreatePost() {
             {errors.description && errors.description.message}
           </p>
           <br />
-          <div className="flex justify-between">
+          <div className="flex justify-between text-black">
             <button className="bg-white px-3 py-1 rounded-3xl" type="submit">
               Create Post
             </button>
@@ -66,8 +73,14 @@ export default function CreatePost() {
               type="file"
               id="file"
               onChange={handleChange}
-              className="rounded-3xl bg-white outline-none"
+              className="w-[.1px] h-[.1px] opacity-0 overflow-hidden absolute z-[-1]  rounded-3xl bg-white outline-none"
             />
+            <label
+              className="text-base text-[700] bg-white inline-block cursor-pointer px-3 py-1 rounded-3xl"
+              htmlFor="file"
+            >
+              Choose a file
+            </label>
           </div>
         </form>
       </div>

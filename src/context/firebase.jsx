@@ -90,10 +90,11 @@ export function FirebaseContextProvider({ children }) {
   useEffect(() => {
     if (currentUser) {
       get(child(ref(database), `users/${currentUser.uid}`)).then((snapshot) => {
+        // setUsername(snapshot.val());
         setUsername(snapshot.val());
       });
     }
-  }, []);
+  }, [currentUser]);
 
   // ref for the post from firestore
   const postsRef = collection(firestoreDatabase, "posts");

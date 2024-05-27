@@ -16,7 +16,7 @@ export default function LoginPage() {
     if (currentUser) {
       navigate("/");
     }
-  }, [currentUser, navigate]);
+  }, [currentUser]);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -80,7 +80,7 @@ export default function LoginPage() {
             type="text"
             id="email"
             placeholder="Enter your email here"
-            className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
+            className="text-white px-3 py-2 w-[350px] outline-none rounded-md"
             {...register("email")}
           />
           {errors.email && (
@@ -98,7 +98,7 @@ export default function LoginPage() {
             type="password"
             id="password"
             placeholder="Enter your password here"
-            className="text-black px-3 py-2 w-[350px] outline-none rounded-md"
+            className="text-white px-3 py-2 w-[350px] outline-none rounded-md"
             {...register("password")}
           />
           {errors.password && (
@@ -115,7 +115,7 @@ export default function LoginPage() {
             <button
               type="submit"
               className="
-          w-[100%] px-6 py-[8px] text- bg-[#FFFD00] text-black font-medium rounded-md flex justify-center"
+          w-[100%] px-6 py-[8px] text- bg-[#282828] text-white font-medium rounded-md flex justify-center"
             >
               {isLoading ? <SpinnerMini /> : "Login"}
             </button>
@@ -125,7 +125,7 @@ export default function LoginPage() {
       <div className="w-full flex mt-3 gap-3">
         <button
           type="submit"
-          className="w-[50%] px-6 py-[8px] text- bg-[#ffffff] text-black font-medium rounded-md flex items-center gap-2 justify-center"
+          className="w-[50%] px-6 py-[8px] text- bg-[#282828] text-white font-medium rounded-md flex items-center gap-2 justify-center"
           onClick={signupWithGoogle}
         >
           Sign in with
